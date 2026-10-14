@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fruit Frenzy — Catch the Crunch!</title>
+<style>
+:root{--ink:#17324d;--blue:#3867e8;--deep:#2147b9;--gold:#ffd166}
+*{box-sizing:border-box}body{margin:0;padding:22px 14px 32px;background:radial-gradient(circle at 10% 8%,#fff0bb,transparent 25%),radial-gradient(circle at 90% 10%,#ccefff,transparent 28%),#f3f7ff;color:var(--ink);font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif}
+.wrap{width:min(980px,100%);margin:auto}header{text-align:center;margin-bottom:20px}.tag{display:inline-block;padding:7px 13px;border-radius:99px;background:#e5ebff;color:#274cba;font-size:11px;font-weight:900;letter-spacing:2px}h1{font-size:clamp(36px,7vw,58px);letter-spacing:-2px;margin:10px 0 5px}h1 span{color:#f05252}header p{margin:0;color:#62758e;font-size:16px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 255px;gap:16px}.panel{background:#ffffffed;border:1px solid #dfe8f7;border-radius:25px;padding:15px;box-shadow:0 15px 40px #1b37601b}.hud{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 3px 13px}.score{background:#eef3ff;padding:8px 14px;border-radius:15px;min-width:100px}.score small{display:block;font-size:10px;letter-spacing:1.4px;color:#71819a;font-weight:900}.score strong{font-size:27px}.status{padding:9px 12px;border-radius:99px;background:#e8faef;color:#28794d;font-size:11px;font-weight:900;letter-spacing:.4px}
+canvas{display:block;width:100%;height:auto;border-radius:18px;border:2px solid #dce9f7;background:#d9f3ff;touch-action:none}.controls{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:14px}button{font:inherit;font-weight:900;border:0;border-radius:13px;padding:12px 15px;cursor:pointer;touch-action:manipulation;transition:transform .12s}button:active{transform:translateY(2px)}.primary{background:var(--blue);color:white;box-shadow:0 5px 0 var(--deep)}.move{background:#edf2ff;color:#274cba;min-width:90px}button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}#message{text-align:center;min-height:24px;margin:13px 0 1px;color:#6b7d95;font-size:13px;font-weight:750}
+.side{padding:21px;display:flex;flex-direction:column;gap:17px}.side h2{margin:0;font-size:19px}.step{display:flex;gap:10px;align-items:flex-start;color:#536782;font-size:13px;line-height:1.5}.num{flex:0 0 29px;height:29px;display:grid;place-items:center;border-radius:10px;background:#fff0bf;color:#875d00;font-weight:1000}.tip{margin-top:auto;padding:13px;background:#effbf3;color:#34714e;border-radius:15px;font-size:12px;line-height:1.5}
+details{margin-top:17px;background:#fff;border:1px solid #dfe8f7;border-radius:17px;padding:15px;color:#566982;font-size:13px}summary{cursor:pointer;font-weight:900;color:var(--ink)}code{background:#eef3ff;padding:2px 5px;border-radius:5px}footer{text-align:center;color:#8290a5;font-size:12px;margin:17px 0 0}
+@media(max-width:740px){body{padding:14px 9px}.layout{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr;padding:16px}.side h2,.tip{grid-column:1/-1}.panel{padding:10px}.move{min-width:75px;padding:11px}.controls button{font-size:14px}}
+</style>
+</head>
+<body><main class="wrap">
+<header><span class="tag">YOUR LITTLE ARCADE ADVENTURE</span><h1>🍎 Fruit <span>Frenzy</span></h1><p>Catch the crunch. Chase your high score.</p></header>
+<div class="layout"><section class="panel">
+<div class="hud"><div class="score"><small>YOUR SCORE</small><strong id="score">00</strong></div><div class="score"><small>BEST SCORE</small><strong id="best">00</strong></div><div class="status" id="state">● READY</div></div>
+<canvas id="game" width="640" height="420" aria-label="Fruit Frenzy game"></canvas>
+<div class="controls"><button class="move" id="left">← Left</button><button class="primary" id="start">▶ Start Game</button><button class="move" id="right">Right →</button></div><p id="message">Ready? Press Start Game and catch your first apple!</p>
+</section><aside class="panel side"><h2>🎮 How to play</h2>
+<div class="step"><span class="num">1</span><span>Press <b>Start Game</b> to begin your round.</span></div>
+<div class="step"><span class="num">2</span><span>Move with the <b>← → arrow keys</b> or the buttons.</span></div>
+<div class="step"><span class="num">3</span><span>Catch each apple to earn <b>1 point</b>.</span></div>
+<div class="step"><span class="num">4</span><span>Miss an apple? No worries — start a new round!</span></div>
+<div class="tip">💡 <b>Phone tip:</b> Use the arrow buttons or drag your finger across the game to move the basket.</div>
+</aside></div></main>
+<script>
+(()=>{const c=document.querySelector('#game'),ctx=c.getContext('2d'),W=c.width,H=c.height,scoreEl=document.querySelector('#score'),bestEl=document.querySelector('#best'),state=document.querySelector('#state'),msg=document.querySelector('#message'),btn=document.querySelector('#start');let score=0,best=0,running=false,over=false;const basket={x:272,y:362,w:96,h:30,speed:7},fruit={x:320,y:60,r:15,speed:2.7,type:'apple'},keys={left:false,right:false};
+function newFruit(){fruit.x=28+Math.random()*(W-56);fruit.y=-20;fruit.speed=2.7+Math.min(score*.13,3.5);fruit.type=['apple','orange','banana'][Math.floor(Math.random()*3)]}
+function start(){score=0;scoreEl.textContent='00';running=true;over=false;basket.x=W/2-basket.w/2;newFruit();state.textContent='● PLAYING';state.style.background='#e8faef';state.style.color='#28794d';msg.textContent='Nice and easy — catch those apples!';btn.textContent='↻ Restart'}
+function rr(a,y,w,h,r){ctx.beginPath();ctx.roundRect(a,y,w,h,r);ctx.fill()}
+function apple(){ctx.save();ctx.translate(fruit.x,fruit.y);
+if(fruit.type==='apple'){
+ctx.fillStyle='#f34b57';ctx.beginPath();ctx.arc(-5,0,12,0,Math.PI*2);ctx.arc(6,0,12,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#39a96b';ctx.beginPath();ctx.ellipse(8,-15,8,4,-.5,0,Math.PI*2);ctx.fill();
+ctx.strokeStyle='#80502c';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,-10);ctx.lineTo(1,-17);ctx.stroke();
+}else if(fruit.type==='orange'){
+ctx.fillStyle='#ff9d2e';ctx.beginPath();ctx.arc(0,0,14,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#ffbd59';ctx.beginPath();ctx.arc(-4,-5,4,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#39a96b';ctx.beginPath();ctx.ellipse(5,-14,7,3,-.4,0,Math.PI*2);ctx.fill();
+}else{
+ctx.rotate(-.28);ctx.fillStyle='#ffd447';ctx.beginPath();ctx.moveTo(-16,-7);ctx.quadraticCurveTo(-7,-15,5,-10);ctx.quadraticCurveTo(18,-5,15,3);ctx.quadraticCurveTo(3,11,-10,6);ctx.quadraticCurveTo(-19,2,-16,-7);ctx.fill();
+ctx.strokeStyle='#e7a928';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-13,-5);ctx.quadraticCurveTo(0,1,12,3);ctx.stroke();
+ctx.strokeStyle='#80502c';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(13,1);ctx.lineTo(17,-5);ctx.stroke();
+}ctx.restore()}
+function drawBasket(){ctx.fillStyle='#b8733e';rr(basket.x,basket.y,basket.w,basket.h,7);ctx.strokeStyle='#86502d';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(basket.x+7,basket.y+5);ctx.lineTo(basket.x+basket.w-7,basket.y+5);ctx.stroke();for(let i=1;i<6;i++){ctx.beginPath();ctx.moveTo(basket.x+i*basket.w/6,basket.y+7);ctx.lineTo(basket.x+i*basket.w/6,basket.y+basket.h-3);ctx.stroke()}}
+function draw(){let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#bfeaff');g.addColorStop(1,'#f2ffec');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);ctx.fillStyle='#ffffffaa';[[90,75,28],[115,72,22],[135,77,18],[460,120,23],[482,113,29],[510,121,20]].forEach(([a,y,r])=>{ctx.beginPath();ctx.arc(a,y,r,0,Math.PI*2);ctx.fill()});ctx.fillStyle='#83d17b';ctx.fillRect(0,H-16,W,16);ctx.fillStyle='#e3f4c9';ctx.fillRect(0,H-19,W,3);apple();drawBasket();if(!running){ctx.fillStyle='#ffffffed';rr(70,143,W-140,132,22);ctx.textAlign='center';ctx.fillStyle='#17324d';ctx.font='900 32px system-ui';ctx.fillText(over?'Round Over!':'Ready, fruit ninja?',W/2,191);ctx.font='18px system-ui';ctx.fillStyle='#61758d';ctx.fillText(over?`You scored ${score} point${score===1?'':'s'}!`:'Catch apples in your basket.',W/2,224);ctx.font='14px system-ui';ctx.fillText(over?'Press Play Again for another round':'Press Start Game below to begin',W/2,250);ctx.textAlign='left'}}
+function loop(){if(running){if(keys.left)basket.x-=basket.speed;if(keys.right)basket.x+=basket.speed;basket.x=Math.max(0,Math.min(W-basket.w,basket.x));fruit.y+=fruit.speed;let caught=fruit.y+fruit.r>=basket.y&&fruit.y-fruit.r<=basket.y+basket.h&&fruit.x>=basket.x-fruit.r&&fruit.x<=basket.x+basket.w+fruit.r;if(caught){score++;scoreEl.textContent=String(score).padStart(2,'0');best=Math.max(best,score);bestEl.textContent=String(best).padStart(2,'0');msg.textContent='Great catch! Keep your streak going!';newFruit()}else if(fruit.y-fruit.r>H){running=false;over=true;state.textContent='● ROUND OVER';state.style.background='#fff0e9';state.style.color='#ad4b29';msg.textContent=`Round finished — final score: ${score}.`;btn.textContent='↻ Play Again'}}draw();requestAnimationFrame(loop)}
+btn.addEventListener('click',start);document.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft')keys.left=true;if(e.key==='ArrowRight')keys.right=true;if(e.key===' '&&!running)start()});document.addEventListener('keyup',e=>{if(e.key==='ArrowLeft')keys.left=false;if(e.key==='ArrowRight')keys.right=false});
+function hold(id,key){let el=document.querySelector(id),down=e=>{e.preventDefault();keys[key]=true},up=e=>{e.preventDefault();keys[key]=false};el.addEventListener('pointerdown',down);['pointerup','pointercancel','pointerleave'].forEach(v=>el.addEventListener(v,up))}hold('#left','left');hold('#right','right');
+function moveTouch(e){let r=c.getBoundingClientRect();basket.x=(e.clientX-r.left)/r.width*W-basket.w/2;basket.x=Math.max(0,Math.min(W-basket.w,basket.x))}c.addEventListener('pointerdown',moveTouch);c.addEventListener('pointermove',e=>{if(e.buttons||e.pointerType==='touch')moveTouch(e)});bestEl.textContent='00';draw();loop()})();
+</script></body></html>
