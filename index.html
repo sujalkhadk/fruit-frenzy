@@ -1,55 +1,322 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Fruit Frenzy — Catch the Crunch!</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fruit Frenzy</title>
+<!-- ============================================================
+  FRUIT CATCHER DELUXE  |  one file: HTML + CSS + JavaScript
+  Edit the CONFIG block in the <script> to change the game.
+  Host free: push to GitHub -> Settings -> Pages -> main branch.
+============================================================= -->
 <style>
-:root{--ink:#17324d;--blue:#3867e8;--deep:#2147b9;--gold:#ffd166}
-*{box-sizing:border-box}body{margin:0;padding:22px 14px 32px;background:radial-gradient(circle at 10% 8%,#fff0bb,transparent 25%),radial-gradient(circle at 90% 10%,#ccefff,transparent 28%),#f3f7ff;color:var(--ink);font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif}
-.wrap{width:min(980px,100%);margin:auto}header{text-align:center;margin-bottom:20px}.tag{display:inline-block;padding:7px 13px;border-radius:99px;background:#e5ebff;color:#274cba;font-size:11px;font-weight:900;letter-spacing:2px}h1{font-size:clamp(36px,7vw,58px);letter-spacing:-2px;margin:10px 0 5px}h1 span{color:#f05252}header p{margin:0;color:#62758e;font-size:16px}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 255px;gap:16px}.panel{background:#ffffffed;border:1px solid #dfe8f7;border-radius:25px;padding:15px;box-shadow:0 15px 40px #1b37601b}.hud{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 3px 13px}.score{background:#eef3ff;padding:8px 14px;border-radius:15px;min-width:100px}.score small{display:block;font-size:10px;letter-spacing:1.4px;color:#71819a;font-weight:900}.score strong{font-size:27px}.status{padding:9px 12px;border-radius:99px;background:#e8faef;color:#28794d;font-size:11px;font-weight:900;letter-spacing:.4px}
-canvas{display:block;width:100%;height:auto;border-radius:18px;border:2px solid #dce9f7;background:#d9f3ff;touch-action:none}.controls{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:14px}button{font:inherit;font-weight:900;border:0;border-radius:13px;padding:12px 15px;cursor:pointer;touch-action:manipulation;transition:transform .12s}button:active{transform:translateY(2px)}.primary{background:var(--blue);color:white;box-shadow:0 5px 0 var(--deep)}.move{background:#edf2ff;color:#274cba;min-width:90px}button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}#message{text-align:center;min-height:24px;margin:13px 0 1px;color:#6b7d95;font-size:13px;font-weight:750}
-.side{padding:21px;display:flex;flex-direction:column;gap:17px}.side h2{margin:0;font-size:19px}.step{display:flex;gap:10px;align-items:flex-start;color:#536782;font-size:13px;line-height:1.5}.num{flex:0 0 29px;height:29px;display:grid;place-items:center;border-radius:10px;background:#fff0bf;color:#875d00;font-weight:1000}.tip{margin-top:auto;padding:13px;background:#effbf3;color:#34714e;border-radius:15px;font-size:12px;line-height:1.5}
-details{margin-top:17px;background:#fff;border:1px solid #dfe8f7;border-radius:17px;padding:15px;color:#566982;font-size:13px}summary{cursor:pointer;font-weight:900;color:var(--ink)}code{background:#eef3ff;padding:2px 5px;border-radius:5px}footer{text-align:center;color:#8290a5;font-size:12px;margin:17px 0 0}
-@media(max-width:740px){body{padding:14px 9px}.layout{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr;padding:16px}.side h2,.tip{grid-column:1/-1}.panel{padding:10px}.move{min-width:75px;padding:11px}.controls button{font-size:14px}}
+:root{--navy:#172747;--blue:#5268ff;--purple:#7d4dff;--red:#f44f63;--green:#2eb872;--gold:#ffc83d}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:20px 12px 30px;color:var(--navy);font-family:"Trebuchet MS",system-ui,sans-serif;
+  background:radial-gradient(circle at 8% 4%,#ffe5a8 0,transparent 26%),radial-gradient(circle at 92% 9%,#c9f1ff 0,transparent 29%),linear-gradient(145deg,#f9f7ff,#edf9ff)}
+.wrap{width:min(1020px,100%);margin:auto}
+header{text-align:center;margin-bottom:16px}
+h1{font-size:clamp(34px,7vw,58px);margin:6px 0;letter-spacing:-2px}
+h1 span{color:var(--red);text-shadow:0 3px 0 #ffd0a9}
+header p{margin:0;color:#687995;font-weight:700}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:16px}
+.panel{background:#ffffffdc;border:1px solid #e3e9fa;border-radius:24px;padding:16px;box-shadow:0 16px 40px #293d6514}
+.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.stat{border-radius:14px;padding:8px 11px;background:#f0f3ff}
+.stat:nth-child(2){background:#fff2d3}.stat:nth-child(3){background:#e8fbef}.stat:nth-child(4){background:#ffe9ee}
+.stat small{display:block;color:#7785a0;font-size:9px;letter-spacing:1.3px;font-weight:900}
+.stat strong{font-size:24px}
+.canvas-wrap{border-radius:18px;border:2px solid #dce7fb;overflow:hidden;background:#bfeaff}
+canvas{display:block;width:100%;height:auto;touch-action:none}
+.controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+button{font:inherit;font-weight:900;border:0;border-radius:13px;padding:12px 15px;cursor:pointer;transition:transform .12s}
+button:hover{transform:translateY(-1px)}button:active{transform:translateY(2px)}
+.primary{color:#fff;background:linear-gradient(135deg,var(--blue),var(--purple));box-shadow:0 5px 0 #423bb7}
+.move{background:#edf0ff;color:#454fc5;min-width:80px}.util{background:#f1f4fa;color:#53627c}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+#message{min-height:22px;text-align:center;margin:12px 0 0;font-size:14px;font-weight:800;color:#6d7b95}
+.side{display:flex;flex-direction:column;gap:12px;padding:20px}
+.side h2{margin:0;font-size:20px}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px}
+.legend div{background:#f5f7ff;border-radius:10px;padding:6px 8px}
+.rule{font-size:13px;line-height:1.5;color:#5a6a83}
+.tip{padding:12px;border-radius:14px;background:#e9fbf0;color:#33734e;font-size:12px;line-height:1.5}
+footer{text-align:center;color:#8995aa;font-size:12px;margin-top:16px}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.hud{grid-template-columns:1fr 1fr}.panel{padding:10px}}
 </style>
 </head>
-<body><main class="wrap">
-<header><span class="tag">YOUR LITTLE ARCADE ADVENTURE</span><h1>🍎 Fruit <span>Frenzy</span></h1><p>Catch the crunch. Chase your high score.</p></header>
-<div class="layout"><section class="panel">
-<div class="hud"><div class="score"><small>YOUR SCORE</small><strong id="score">00</strong></div><div class="score"><small>BEST SCORE</small><strong id="best">00</strong></div><div class="status" id="state">● READY</div></div>
-<canvas id="game" width="640" height="420" aria-label="Fruit Frenzy game"></canvas>
-<div class="controls"><button class="move" id="left">← Left</button><button class="primary" id="start">▶ Start Game</button><button class="move" id="right">Right →</button></div><p id="message">Ready? Press Start Game and catch your first apple!</p>
-</section><aside class="panel side"><h2>🎮 How to play</h2>
-<div class="step"><span class="num">1</span><span>Press <b>Start Game</b> to begin your round.</span></div>
-<div class="step"><span class="num">2</span><span>Move with the <b>← → arrow keys</b> or the buttons.</span></div>
-<div class="step"><span class="num">3</span><span>Catch each apple to earn <b>1 point</b>.</span></div>
-<div class="step"><span class="num">4</span><span>Miss an apple? No worries — start a new round!</span></div>
-<div class="tip">💡 <b>Phone tip:</b> Use the arrow buttons or drag your finger across the game to move the basket.</div>
-</aside></div></main>
+<body>
+<main class="wrap">
+<header>
+  <h1>🍎 Fruit <span>Frenzy</span></h1>
+  <p>Catch the fruit. Avoid rotten apples. Reach 20 points to win!</p>
+</header>
+
+<div class="layout">
+  <section class="panel">
+    <div class="hud">
+      <div class="stat"><small>SCORE</small><strong id="score">0</strong></div>
+      <div class="stat"><small>BEST</small><strong id="best">0</strong></div>
+      <div class="stat"><small>LIVES</small><strong id="lives">❤️❤️❤️</strong></div>
+      <div class="stat"><small>SPEED</small><strong id="speed">4</strong></div>
+    </div>
+    <div class="canvas-wrap"><canvas id="game" width="720" height="460" aria-label="Fruit Frenzy game"></canvas></div>
+    <div class="controls">
+      <button class="move" id="left">◀ Left</button>
+      <button class="primary" id="start">▶ Start</button>
+      <button class="move" id="right">Right ▶</button>
+      <button class="util" id="pause">Ⅱ Pause</button>
+      <button class="util" id="mute">🔊</button>
+    </div>
+    <p id="message">Press Start or the Space bar!</p>
+  </section>
+
+  <aside class="panel side">
+    <h2>🎮 How to play</h2>
+    <div class="rule">Move the basket with <b>← →</b> (or <b>A / D</b>), the buttons, or by dragging on the game.</div>
+    <div class="legend" id="legend"></div>
+    <div class="rule">Missing a good fruit costs nothing. Every <b>5 points</b> the fruit falls faster.</div>
+    <div class="tip">💡 Press <b>P</b> to pause. Your best score is saved in your browser.</div>
+  </aside>
+</div>
+
+</main>
+
 <script>
-(()=>{const c=document.querySelector('#game'),ctx=c.getContext('2d'),W=c.width,H=c.height,scoreEl=document.querySelector('#score'),bestEl=document.querySelector('#best'),state=document.querySelector('#state'),msg=document.querySelector('#message'),btn=document.querySelector('#start');let score=0,best=0,running=false,over=false;const basket={x:272,y:362,w:96,h:30,speed:7},fruit={x:320,y:60,r:15,speed:2.7,type:'apple'},keys={left:false,right:false};
-function newFruit(){fruit.x=28+Math.random()*(W-56);fruit.y=-20;fruit.speed=2.7+Math.min(score*.13,3.5);fruit.type=['apple','orange','banana'][Math.floor(Math.random()*3)]}
-function start(){score=0;scoreEl.textContent='00';running=true;over=false;basket.x=W/2-basket.w/2;newFruit();state.textContent='● PLAYING';state.style.background='#e8faef';state.style.color='#28794d';msg.textContent='Nice and easy — catch those apples!';btn.textContent='↻ Restart'}
-function rr(a,y,w,h,r){ctx.beginPath();ctx.roundRect(a,y,w,h,r);ctx.fill()}
-function apple(){ctx.save();ctx.translate(fruit.x,fruit.y);
-if(fruit.type==='apple'){
-ctx.fillStyle='#f34b57';ctx.beginPath();ctx.arc(-5,0,12,0,Math.PI*2);ctx.arc(6,0,12,0,Math.PI*2);ctx.fill();
-ctx.fillStyle='#39a96b';ctx.beginPath();ctx.ellipse(8,-15,8,4,-.5,0,Math.PI*2);ctx.fill();
-ctx.strokeStyle='#80502c';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,-10);ctx.lineTo(1,-17);ctx.stroke();
-}else if(fruit.type==='orange'){
-ctx.fillStyle='#ff9d2e';ctx.beginPath();ctx.arc(0,0,14,0,Math.PI*2);ctx.fill();
-ctx.fillStyle='#ffbd59';ctx.beginPath();ctx.arc(-4,-5,4,0,Math.PI*2);ctx.fill();
-ctx.fillStyle='#39a96b';ctx.beginPath();ctx.ellipse(5,-14,7,3,-.4,0,Math.PI*2);ctx.fill();
-}else{
-ctx.rotate(-.28);ctx.fillStyle='#ffd447';ctx.beginPath();ctx.moveTo(-16,-7);ctx.quadraticCurveTo(-7,-15,5,-10);ctx.quadraticCurveTo(18,-5,15,3);ctx.quadraticCurveTo(3,11,-10,6);ctx.quadraticCurveTo(-19,2,-16,-7);ctx.fill();
-ctx.strokeStyle='#e7a928';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-13,-5);ctx.quadraticCurveTo(0,1,12,3);ctx.stroke();
-ctx.strokeStyle='#80502c';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(13,1);ctx.lineTo(17,-5);ctx.stroke();
-}ctx.restore()}
-function drawBasket(){ctx.fillStyle='#b8733e';rr(basket.x,basket.y,basket.w,basket.h,7);ctx.strokeStyle='#86502d';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(basket.x+7,basket.y+5);ctx.lineTo(basket.x+basket.w-7,basket.y+5);ctx.stroke();for(let i=1;i<6;i++){ctx.beginPath();ctx.moveTo(basket.x+i*basket.w/6,basket.y+7);ctx.lineTo(basket.x+i*basket.w/6,basket.y+basket.h-3);ctx.stroke()}}
-function draw(){let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#bfeaff');g.addColorStop(1,'#f2ffec');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);ctx.fillStyle='#ffffffaa';[[90,75,28],[115,72,22],[135,77,18],[460,120,23],[482,113,29],[510,121,20]].forEach(([a,y,r])=>{ctx.beginPath();ctx.arc(a,y,r,0,Math.PI*2);ctx.fill()});ctx.fillStyle='#83d17b';ctx.fillRect(0,H-16,W,16);ctx.fillStyle='#e3f4c9';ctx.fillRect(0,H-19,W,3);apple();drawBasket();if(!running){ctx.fillStyle='#ffffffed';rr(70,143,W-140,132,22);ctx.textAlign='center';ctx.fillStyle='#17324d';ctx.font='900 32px system-ui';ctx.fillText(over?'Round Over!':'Ready, fruit ninja?',W/2,191);ctx.font='18px system-ui';ctx.fillStyle='#61758d';ctx.fillText(over?`You scored ${score} point${score===1?'':'s'}!`:'Catch apples in your basket.',W/2,224);ctx.font='14px system-ui';ctx.fillText(over?'Press Play Again for another round':'Press Start Game below to begin',W/2,250);ctx.textAlign='left'}}
-function loop(){if(running){if(keys.left)basket.x-=basket.speed;if(keys.right)basket.x+=basket.speed;basket.x=Math.max(0,Math.min(W-basket.w,basket.x));fruit.y+=fruit.speed;let caught=fruit.y+fruit.r>=basket.y&&fruit.y-fruit.r<=basket.y+basket.h&&fruit.x>=basket.x-fruit.r&&fruit.x<=basket.x+basket.w+fruit.r;if(caught){score++;scoreEl.textContent=String(score).padStart(2,'0');best=Math.max(best,score);bestEl.textContent=String(best).padStart(2,'0');msg.textContent='Great catch! Keep your streak going!';newFruit()}else if(fruit.y-fruit.r>H){running=false;over=true;state.textContent='● ROUND OVER';state.style.background='#fff0e9';state.style.color='#ad4b29';msg.textContent=`Round finished — final score: ${score}.`;btn.textContent='↻ Play Again'}}draw();requestAnimationFrame(loop)}
-btn.addEventListener('click',start);document.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft')keys.left=true;if(e.key==='ArrowRight')keys.right=true;if(e.key===' '&&!running)start()});document.addEventListener('keyup',e=>{if(e.key==='ArrowLeft')keys.left=false;if(e.key==='ArrowRight')keys.right=false});
-function hold(id,key){let el=document.querySelector(id),down=e=>{e.preventDefault();keys[key]=true},up=e=>{e.preventDefault();keys[key]=false};el.addEventListener('pointerdown',down);['pointerup','pointercancel','pointerleave'].forEach(v=>el.addEventListener(v,up))}hold('#left','left');hold('#right','right');
-function moveTouch(e){let r=c.getBoundingClientRect();basket.x=(e.clientX-r.left)/r.width*W-basket.w/2;basket.x=Math.max(0,Math.min(W-basket.w,basket.x))}c.addEventListener('pointerdown',moveTouch);c.addEventListener('pointermove',e=>{if(e.buttons||e.pointerType==='touch')moveTouch(e)});bestEl.textContent='00';draw();loop()})();
-</script></body></html>
+/* ================= CONFIG: change these numbers to change the game ================= */
+const CONFIG = {
+  startLives: 3,        // lives at the start
+  maxLives: 5,          // heart power-up cannot go above this
+  winScore: 20,         // reach this score to win
+  startSpeed: 4,        // starting speed (shown in the HUD)
+  speedEveryPoints: 5,  // speed goes up by 1 after this many points
+  basketSpeed: 9,       // how fast the basket slides
+  maxOnScreen: 5,       // maximum falling items at once
+  spawnEveryMs: 800,    // time between new items (milliseconds)
+  slowSeconds: 5,       // how long the ❄️ slow effect lasts
+  chance: { rotten: 0.18, golden: 0.07, heart: 0.04, ice: 0.05 }  // the rest are normal fruit
+};
+
+/* Add a new fruit by adding one line: emoji + points. */
+const FRUITS = [
+  { e: '🍎', p: 1 }, { e: '🍊', p: 1 }, { e: '🍌', p: 1 }, { e: '🍓', p: 1 },
+  { e: '🍒', p: 1 }, { e: '🍇', p: 2 }, { e: '🍉', p: 2 }, { e: '🍍', p: 2 }, { e: '🥝', p: 2 }
+];
+const GOLDEN = { e: '⭐', p: 5 };
+const HEART  = { e: '💖' };
+const ICE    = { e: '❄️' };
+
+/* ================= SETUP ================= */
+const $ = id => document.getElementById(id);
+const canvas = $('game'), ctx = canvas.getContext('2d'), W = canvas.width, H = canvas.height;
+const scoreEl = $('score'), bestEl = $('best'), livesEl = $('lives'), speedEl = $('speed'), msgEl = $('message');
+const startBtn = $('start'), pauseBtn = $('pause'), muteBtn = $('mute');
+
+let best = 0;
+try { best = Number(localStorage.getItem('fruitCatcherBest') || 0); } catch (e) {}
+bestEl.textContent = best;
+
+const basket = { w: 110, h: 34, x: W / 2 - 55, y: H - 70 };
+const keys = { left: false, right: false };
+let state = 'ready';            // ready | playing | paused | won | lost
+let score, lives, speed, items, particles, popups, slowUntil, lastSpawn, last, shake, clouds, muted = false;
+
+$('legend').innerHTML =
+  '<div>🍎🍊🍌 +1</div><div>🍇🍉🍍 +2</div><div>⭐ +5</div><div>🤢 −1 life</div><div>💖 +1 life</div><div>❄️ slow time</div>';
+
+/* ================= SOUND (tiny beeps, no files needed) ================= */
+let audio;
+function beep(freq, dur = 0.12, type = 'sine') {
+  if (muted) return;
+  try {
+    audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+    const o = audio.createOscillator(), g = audio.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.12, audio.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + dur);
+    o.connect(g); g.connect(audio.destination); o.start(); o.stop(audio.currentTime + dur);
+  } catch (e) {}
+}
+
+/* ================= GAME FLOW ================= */
+function resetGame() {
+  score = 0; lives = CONFIG.startLives; speed = CONFIG.startSpeed;
+  items = []; particles = []; popups = []; slowUntil = 0; shake = 0; last = 0; lastSpawn = 0;
+  basket.x = W / 2 - basket.w / 2;
+  clouds = [{ x: 90, y: 70, s: 1 }, { x: 430, y: 120, s: .7 }, { x: 620, y: 55, s: .6 }];
+  updateHud();
+}
+function startGame() {
+  resetGame(); state = 'playing';
+  startBtn.textContent = '↻ Restart'; msgEl.textContent = 'Catch the fruit and avoid 🤢!';
+  beep(520, .15);
+}
+function endGame(won) {
+  state = won ? 'won' : 'lost';
+  startBtn.textContent = '↻ Play Again';
+  msgEl.textContent = won ? '🏆 YOU WIN! Click Play Again.' : '💥 GAME OVER. Click Play Again.';
+  if (won) { beep(660, .15); setTimeout(() => beep(880, .25), 150); } else beep(160, .5, 'sawtooth');
+}
+function togglePause() {
+  if (state === 'playing') state = 'paused'; else if (state === 'paused') { state = 'playing'; last = 0; }
+  pauseBtn.textContent = state === 'paused' ? '▶ Resume' : 'Ⅱ Pause';
+}
+function updateHud() {
+  scoreEl.textContent = score;
+  speedEl.textContent = speed;
+  livesEl.textContent = '❤️'.repeat(Math.max(lives, 0)) || '🖤';
+}
+
+/* ================= ITEMS ================= */
+function spawn() {
+  const c = CONFIG.chance, r = Math.random();
+  let it = { x: 35 + Math.random() * (W - 70), y: -30, rot: 0, spin: (Math.random() - .5) * .08, r: 20 };
+  if (r < c.rotten)                               { it.type = 'rotten'; it.e = '🍏'; }
+  else if (r < c.rotten + c.golden)               { it.type = 'golden'; it.e = GOLDEN.e; it.p = GOLDEN.p; }
+  else if (r < c.rotten + c.golden + c.heart)     { if (lives >= CONFIG.maxLives) return; it.type = 'heart'; it.e = HEART.e; }
+  else if (r < c.rotten + c.golden + c.heart + c.ice) { it.type = 'ice'; it.e = ICE.e; }
+  else { const f = FRUITS[Math.floor(Math.random() * FRUITS.length)]; it.type = 'fruit'; it.e = f.e; it.p = f.p; }
+  items.push(it);
+}
+function burst(x, y, color) {
+  for (let i = 0; i < 14; i++) particles.push({ x, y, vx: (Math.random() - .5) * 6, vy: (Math.random() - .9) * 6, life: 28, color });
+}
+function popup(x, y, text, color) { popups.push({ x, y, text, color, life: 45 }); }
+
+function caught(it) {
+  burst(it.x, it.y, '#ffd25a');
+  if (it.type === 'rotten') {
+    lives--; shake = 12; burst(it.x, it.y, '#7a8f2a'); popup(it.x, it.y, '−1 ❤️', '#d63048'); beep(140, .3, 'sawtooth');
+    msgEl.textContent = 'Yuck! A rotten apple!';
+  } else if (it.type === 'heart') {
+    lives = Math.min(lives + 1, CONFIG.maxLives); popup(it.x, it.y, '+1 ❤️', '#e0265c'); beep(780); msgEl.textContent = 'Extra life!';
+  } else if (it.type === 'ice') {
+    slowUntil = performance.now() + CONFIG.slowSeconds * 1000; popup(it.x, it.y, 'SLOW!', '#2a8fd6'); beep(300, .25);
+    msgEl.textContent = '❄️ Time slowed down!';
+  } else {
+    const old = Math.floor(score / CONFIG.speedEveryPoints);
+    score += it.p; popup(it.x, it.y, '+' + it.p, '#2a9d57'); beep(it.type === 'golden' ? 900 : 600 + it.p * 60);
+    msgEl.textContent = it.type === 'golden' ? '⭐ MEGA CATCH! +5' : 'Sweet catch!';
+    if (Math.floor(score / CONFIG.speedEveryPoints) > old) { speed++; msgEl.textContent = '⚡ Faster! Speed ' + speed; }
+    if (score > best) { best = score; bestEl.textContent = best; try { localStorage.setItem('fruitCatcherBest', best); } catch (e) {} }
+  }
+  updateHud();
+  if (lives <= 0) endGame(false); else if (score >= CONFIG.winScore) endGame(true);
+}
+
+/* ================= UPDATE ================= */
+function update(now) {
+  if (!last) last = now;
+  const dt = Math.min((now - last) / 16.67, 3); last = now;
+  if (keys.left) basket.x -= CONFIG.basketSpeed * dt;
+  if (keys.right) basket.x += CONFIG.basketSpeed * dt;
+  basket.x = Math.max(0, Math.min(W - basket.w, basket.x));
+
+  if (now - lastSpawn > CONFIG.spawnEveryMs && items.length < CONFIG.maxOnScreen) { spawn(); lastSpawn = now; }
+  const slow = now < slowUntil ? 0.45 : 1;
+
+  for (let i = items.length - 1; i >= 0; i--) {
+    const it = items[i];
+    it.y += speed * 0.7 * slow * dt; it.rot += it.spin * dt;
+    const hit = it.y + it.r > basket.y && it.y - it.r < basket.y + basket.h &&
+                it.x > basket.x - it.r * .6 && it.x < basket.x + basket.w + it.r * .6;
+    if (hit) { items.splice(i, 1); caught(it); if (state !== 'playing') return; }
+    else if (it.y - it.r > H) items.splice(i, 1);        // missed: back to the top = removed, no penalty
+  }
+}
+
+/* ================= DRAW ================= */
+function drawBackground(t) {
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, '#6ec6ff'); g.addColorStop(.75, '#d9f3ff'); g.addColorStop(1, '#d9f6c7');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#ffd84d'; ctx.beginPath(); ctx.arc(640, 80, 40, 0, 7); ctx.fill();
+  ctx.fillStyle = 'rgba(255,216,77,.25)'; ctx.beginPath(); ctx.arc(640, 80, 58 + Math.sin(t / 500) * 4, 0, 7); ctx.fill();
+  clouds.forEach(c => {
+    c.x += .15 * c.s; if (c.x > W + 80) c.x = -90;
+    ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.beginPath();
+    ctx.arc(c.x, c.y, 19 * c.s, 0, 7); ctx.arc(c.x + 22 * c.s, c.y - 10 * c.s, 25 * c.s, 0, 7); ctx.arc(c.x + 48 * c.s, c.y, 18 * c.s, 0, 7); ctx.fill();
+  });
+  ctx.fillStyle = '#a3df87'; ctx.beginPath(); ctx.ellipse(60, H, 170, 70, 0, 0, 7); ctx.ellipse(640, H, 210, 80, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = '#6fc46c'; ctx.fillRect(0, H - 22, W, 22);
+}
+function drawBasket() {
+  const { x, y, w, h } = basket;
+  ctx.fillStyle = 'rgba(0,0,0,.12)'; ctx.beginPath(); ctx.ellipse(x + w / 2, y + h + 8, w * .55, 7, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = '#bb743b'; ctx.beginPath(); ctx.roundRect(x + 6, y, w - 12, h, [0, 0, 12, 12]); ctx.fill();
+  ctx.strokeStyle = '#7e4b2b'; ctx.lineWidth = 3;
+  for (let i = 1; i < 6; i++) { ctx.beginPath(); ctx.moveTo(x + 6 + i * (w - 12) / 6, y + 6); ctx.lineTo(x + 6 + i * (w - 12) / 6, y + h - 3); ctx.stroke(); }
+  ctx.fillStyle = '#8a5530'; ctx.beginPath(); ctx.roundRect(x, y - 4, w, 10, 5); ctx.fill();
+}
+function drawItem(it) {
+  ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(it.rot);
+  if (it.type === 'golden') { ctx.shadowColor = '#ffc83d'; ctx.shadowBlur = 18; }
+  ctx.font = '38px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(it.e, 0, 0);
+  if (it.type === 'rotten') { ctx.shadowBlur = 0; ctx.font = '18px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif'; ctx.fillText('🤢', 0, 4); }
+  ctx.restore();
+}
+function overlay(title, sub) {
+  ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.beginPath(); ctx.roundRect(100, 130, W - 200, 170, 26); ctx.fill();
+  ctx.textAlign = 'center'; ctx.fillStyle = '#172747'; ctx.font = '900 38px system-ui,sans-serif'; ctx.fillText(title, W / 2, 190);
+  ctx.fillStyle = '#65758e'; ctx.font = '18px system-ui,sans-serif'; ctx.fillText(sub, W / 2, 232);
+  ctx.font = '15px system-ui,sans-serif'; ctx.fillText('Press Start or Space', W / 2, 266);
+}
+function draw(t) {
+  ctx.save();
+  if (shake > 0) { ctx.translate((Math.random() - .5) * shake, (Math.random() - .5) * shake); shake--; }
+  drawBackground(t);
+  items.forEach(drawItem); drawBasket();
+  particles.forEach(p => { ctx.globalAlpha = Math.max(0, p.life / 28); ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, 7); ctx.fill(); p.x += p.vx; p.y += p.vy; p.vy += .15; p.life--; });
+  ctx.globalAlpha = 1; particles = particles.filter(p => p.life > 0);
+  popups.forEach(p => { ctx.globalAlpha = Math.min(1, p.life / 25); ctx.fillStyle = p.color; ctx.font = '900 26px system-ui,sans-serif'; ctx.textAlign = 'center'; ctx.fillText(p.text, p.x, p.y - (45 - p.life)); p.life--; });
+  ctx.globalAlpha = 1; popups = popups.filter(p => p.life > 0);
+  if (t < slowUntil) { ctx.fillStyle = 'rgba(120,200,255,.18)'; ctx.fillRect(0, 0, W, H); }
+  ctx.restore();
+  if (state === 'ready') overlay('Ready to catch?', 'Fruit = points · 🤢 = lose a life');
+  if (state === 'paused') overlay('Paused', 'Press Resume or P');
+  if (state === 'won') overlay('🏆 YOU WIN!', 'You scored ' + score + ' points!');
+  if (state === 'lost') overlay('GAME OVER', 'Final score: ' + score + ' · Best: ' + best);
+}
+function loop(t) {
+  if (state === 'playing') update(t);
+  draw(t);
+  requestAnimationFrame(loop);
+}
+
+/* ================= CONTROLS ================= */
+startBtn.onclick = startGame;
+pauseBtn.onclick = togglePause;
+muteBtn.onclick = () => { muted = !muted; muteBtn.textContent = muted ? '🔇' : '🔊'; };
+document.addEventListener('keydown', e => {
+  const k = e.key.toLowerCase();
+  if (['arrowleft', 'arrowright', ' '].includes(k)) e.preventDefault();
+  if (k === 'arrowleft' || k === 'a') keys.left = true;
+  if (k === 'arrowright' || k === 'd') keys.right = true;
+  if (k === ' ' && (state === 'ready' || state === 'won' || state === 'lost')) startGame();
+  if (k === 'p') togglePause();
+});
+document.addEventListener('keyup', e => {
+  const k = e.key.toLowerCase();
+  if (k === 'arrowleft' || k === 'a') keys.left = false;
+  if (k === 'arrowright' || k === 'd') keys.right = false;
+});
+function hold(id, key) {
+  const el = $(id), on = e => { e.preventDefault(); keys[key] = true; }, off = () => keys[key] = false;
+  el.addEventListener('pointerdown', on);
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(v => el.addEventListener(v, off));
+}
+hold('left', 'left'); hold('right', 'right');
+function drag(e) {
+  const r = canvas.getBoundingClientRect();
+  basket.x = Math.max(0, Math.min(W - basket.w, (e.clientX - r.left) / r.width * W - basket.w / 2));
+}
+canvas.addEventListener('pointerdown', e => { canvas.setPointerCapture(e.pointerId); drag(e); });
+canvas.addEventListener('pointermove', e => { if (e.buttons || e.pointerType === 'touch') drag(e); });
+
+resetGame();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
