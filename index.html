@@ -1,296 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fruit Frenzy</title>
+<title>Fruit Catcher — Coding Through Games and Activities</title>
 <style>
-:root{--navy:#172747;--blue:#5268ff;--purple:#7d4dff;--red:#f44f63;--green:#2eb872;--gold:#ffc83d}
+:root{--ink:#17324d;--blue:#70c9ff;--green:#49b96a;--cream:#fffdf4;--red:#e94343}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;padding:20px 12px 30px;color:var(--navy);font-family:"Trebuchet MS",system-ui,sans-serif;background:radial-gradient(circle at 8% 4%,#ffe5a8 0,transparent 26%),radial-gradient(circle at 92% 9%,#c9f1ff 0,transparent 29%),linear-gradient(145deg,#f9f7ff,#edf9ff)}
-.wrap{width:min(1020px,100%);margin:auto}
-header{text-align:center;margin-bottom:16px}
-h1{font-size:clamp(34px,7vw,58px);margin:6px 0;letter-spacing:-2px}
-h1 span{color:var(--red);text-shadow:0 3px 0 #ffd0a9}
-header p{margin:0;color:#687995;font-weight:700}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:16px}
-.panel{background:#ffffffdc;border:1px solid #e3e9fa;border-radius:24px;padding:16px;box-shadow:0 16px 40px #293d6514}
-.hud{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:12px}
-.stat{border-radius:14px;padding:8px 11px;background:#f0f3ff;min-width:0}
-.stat:nth-child(2){background:#fff2d3}.stat:nth-child(3){background:#e8fbef}.stat:nth-child(4){background:#f0eaff}.stat:nth-child(5){background:#ffe9ee}
-.stat small{display:block;color:#7785a0;font-size:9px;letter-spacing:1.3px;font-weight:900}
-.stat strong{font-size:24px}
-.canvas-wrap{border-radius:18px;border:2px solid #dce7fb;overflow:hidden;background:#bfeaff}
+body{margin:0;min-height:100vh;padding:18px;background:linear-gradient(#dff5ff,#f7fff4);font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);display:flex;justify-content:center;align-items:center}
+.app{width:min(920px,100%);background:#ffffffd9;border:2px solid #fff;border-radius:24px;padding:clamp(12px,3vw,24px);box-shadow:0 16px 45px #16466c20}
+h1{margin:0;text-align:center;font-size:clamp(1.6rem,4vw,2.4rem)}.subtitle{text-align:center;margin:5px 0 16px;color:#49677b}
+.hud{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.stat{background:#f0f8ff;border:1px solid #d5eaf8;border-radius:14px;padding:8px 16px;min-width:105px;text-align:center;font-weight:700}.stat span{display:block;font-size:.78rem;color:#567187;font-weight:600}.stat strong{font-size:1.2rem}
+.stage-wrap{position:relative;width:100%;overflow:hidden;border-radius:18px;border:3px solid #b4e4ff;background:#8bd7ff}
 canvas{display:block;width:100%;height:auto;touch-action:none}
-.controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
-button{font:inherit;font-weight:900;border:0;border-radius:13px;padding:12px 15px;cursor:pointer;transition:transform .12s}
-button:hover{transform:translateY(-1px)}button:active{transform:translateY(2px)}
-.primary{color:#fff;background:linear-gradient(135deg,var(--blue),var(--purple));box-shadow:0 5px 0 #423bb7}
-.move{background:#edf0ff;color:#454fc5;min-width:80px}.util{background:#f1f4fa;color:#53627c}
-button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
-#message{min-height:22px;text-align:center;margin:12px 0 0;font-size:14px;font-weight:800;color:#6d7b95}
-.side{display:flex;flex-direction:column;gap:12px;padding:20px}
-.side h2{margin:0;font-size:20px}
-.legend{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px}
-.legend div{background:#f5f7ff;border-radius:10px;padding:6px 8px}
-.rule{font-size:13px;line-height:1.5;color:#5a6a83}
-.tip{padding:12px;border-radius:14px;background:#e9fbf0;color:#33734e;font-size:12px;line-height:1.5}
-footer{text-align:center;color:#8995aa;font-size:12px;margin-top:16px}
-@media(max-width:760px){.layout{grid-template-columns:1fr}.hud{grid-template-columns:repeat(2,minmax(0,1fr))}.panel{padding:10px}.stat strong{font-size:22px}}
-@media(max-width:360px){.stat{padding:7px}.stat strong{font-size:20px}}
+.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#16344b35;padding:16px}
+.card{max-width:360px;text-align:center;background:#fffef4;border:3px solid white;border-radius:20px;padding:20px;box-shadow:0 8px 24px #17324d30}
+.card h2{margin:0 0 8px;font-size:1.8rem}.card p{margin:0 0 14px;line-height:1.45}
+button{border:0;border-radius:12px;padding:11px 18px;background:#2378d4;color:#fff;font:inherit;font-weight:800;cursor:pointer;box-shadow:0 3px 0 #18569a}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 #18569a}
+.controls{display:flex;justify-content:center;gap:10px;align-items:center;flex-wrap:wrap;margin-top:13px}
+.move{min-width:76px;background:#2d8a59;box-shadow:0 3px 0 #1c643e;font-size:1.15rem}
+.help{text-align:center;margin:12px 0 0;font-size:.92rem;color:#49677b}
+@media(max-width:500px){body{padding:8px}.stat{min-width:78px;padding:7px 10px}.help{font-size:.83rem}}
 </style>
 </head>
 <body>
-<main class="wrap">
-<header>
-  <h1>🍎 Fruit <span>Frenzy</span></h1>
-  <p>Catch the fruit. Avoid rotten apples. Reach 100 points to win!</p>
-</header>
-<div class="layout">
-  <section class="panel">
-    <div class="hud">
-      <div class="stat"><small>SCORE</small><strong id="score">0</strong></div>
-      <div class="stat"><small>BEST</small><strong id="best">0</strong></div>
-      <div class="stat"><small>LIVES</small><strong id="lives">❤️❤️❤️</strong></div>
-      <div class="stat"><small>LEVEL</small><strong id="level">1</strong></div>
-      <div class="stat"><small>SPEED</small><strong id="speed">4</strong></div>
-    </div>
-    <div class="canvas-wrap"><canvas id="game" width="720" height="460" aria-label="Fruit Frenzy game"></canvas></div>
-    <div class="controls">
-      <button class="move" id="left">◀ Left</button>
-      <button class="primary" id="start">▶ Start</button>
-      <button class="move" id="right">Right ▶</button>
-      <button class="util" id="pause">Ⅱ Pause</button>
-      <button class="util" id="mute">🔊</button>
-    </div>
-    <p id="message">Press Start or the Space bar!</p>
+<main class="app">
+  <h1>🍎 Fruit Catcher</h1>
+  <p class="subtitle">Catch the red apples. Avoid the rotten ones!</p>
+  <section class="hud" aria-label="Game status">
+    <div class="stat"><span>SCORE</span><strong id="score">0</strong></div>
+    <div class="stat"><span>LIVES</span><strong id="lives">❤️ ❤️ ❤️</strong></div>
+    <div class="stat"><span>FALL SPEED</span><strong id="speed">4</strong></div>
   </section>
-  <aside class="panel side">
-    <h2>🎮 How to play</h2>
-    <div class="rule">Move the basket with <b>← →</b> (or <b>A / D</b>), the buttons, or by dragging on the game.</div>
-    <div class="legend" id="legend"></div>
-    <div class="rule">Every 5 points you level up. Each level makes fruit fall faster and appear more often!</div>
-    <div class="tip">💡 Press <b>P</b> to pause. Your best score is saved in your browser.</div>
-  </aside>
-</div>
+  <div class="stage-wrap">
+    <canvas id="game" width="720" height="460" aria-label="Fruit Catcher game area"></canvas>
+    <div class="overlay" id="overlay">
+      <div class="card">
+        <h2 id="messageTitle">Ready to play?</h2>
+        <p id="messageText">Move the basket with the left and right arrow keys. Catch 20 red apples to win, and avoid rotten apples!</p>
+        <button id="start">Start Game</button>
+      </div>
+    </div>
+  </div>
+  <div class="controls">
+    <button class="move" id="left" aria-label="Move basket left">← Left</button>
+    <button id="restart">↻ Restart</button>
+    <button class="move" id="right" aria-label="Move basket right">Right →</button>
+  </div>
+  <p class="help">Keyboard: ← / → arrow keys · On a phone, use the buttons above.<br>Red apple = +1 point · Rotten apple = −1 life · Every 5 points, apples fall faster.</p>
 </main>
 <script>
-const CONFIG = {
-  startLives: 3,
-  maxLives: 5,
-  winScore: 100,
-  startSpeed: 4,
-  speedEveryPoints: 5,
-  basketSpeed: 9,
-  maxOnScreen: 5,
-  spawnEveryMs: 800,
-  minSpawnMs: 300,
-  spawnReductionPerLevel: 60,
-  slowSeconds: 5,
-  chance: { rotten: 0.18, golden: 0.07, heart: 0.04, ice: 0.05 }
-};
-const FRUITS = [
-  { e: '🍎', p: 1 }, { e: '🍊', p: 1 }, { e: '🍌', p: 1 }, { e: '🍓', p: 1 },
-  { e: '🍒', p: 1 }, { e: '🍇', p: 2 }, { e: '🍉', p: 2 }, { e: '🍍', p: 2 }, { e: '🥝', p: 2 }
-];
-const GOLDEN = { e: '⭐', p: 5 };
-const HEART = { e: '💖' };
-const ICE = { e: '❄️' };
-const $ = id => document.getElementById(id);
-const canvas = $('game'), ctx = canvas.getContext('2d'), W = canvas.width, H = canvas.height;
-const scoreEl = $('score'), bestEl = $('best'), livesEl = $('lives'), speedEl = $('speed'), levelEl = $('level'), msgEl = $('message');
-const startBtn = $('start'), pauseBtn = $('pause'), muteBtn = $('mute');
-let best = 0;
-try { best = Number(localStorage.getItem('fruitCatcherBest') || 0); } catch (e) {}
-bestEl.textContent = best;
-const basket = { w: 110, h: 34, x: W / 2 - 55, y: H - 70 };
-const keys = { left: false, right: false };
-let state = 'ready';
-let score, lives, speed, level, items, particles, popups, slowUntil, lastSpawn, last, shake, clouds, muted = false;
-$('legend').innerHTML =
-  '<div>🍎🍊🍌 +1</div><div>🍇🍉🍍 +2</div><div>⭐ +5</div><div>🤢 −1 life</div><div>💖 +1 life</div><div>❄️ slow time</div>';
-let audio;
-function beep(freq, dur = 0.12, type = 'sine') {
-  if (muted) return;
-  try {
-    audio = audio || new (window.AudioContext || window.webkitAudioContext)();
-    const o = audio.createOscillator(), g = audio.createGain();
-    o.type = type; o.frequency.value = freq;
-    g.gain.setValueAtTime(0.12, audio.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + dur);
-    o.connect(g); g.connect(audio.destination); o.start(); o.stop(audio.currentTime + dur);
-  } catch (e) {}
+(() => {
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+const $=id=>document.getElementById(id);
+const W=canvas.width,H=canvas.height,GROUND=H-48;
+let basket={x:W/2,y:GROUND-5,w:88,h:38},score=0,lives=3,speed=4,running=false,ended=false;
+let apples=[],keys={left:false,right:false},lastSpawn=0,lastTime=0;
+function reset(){score=0;lives=3;speed=4;basket.x=W/2;apples=[];lastSpawn=0;lastTime=0;running=true;ended=false;$('overlay').style.display='none';hud();for(let i=0;i<3;i++)spawn(true);requestAnimationFrame(loop)}
+function hud(){$('score').textContent=score;$('lives').textContent='❤️ '.repeat(lives).trim()||'0';$('speed').textContent=speed}
+function finish(win){running=false;ended=true;$('messageTitle').textContent=win?'YOU WIN!':'GAME OVER';$('messageText').textContent=win?'Amazing! You caught 20 red apples!':'All three lives are gone. Try again and watch out for rotten apples!';$('start').textContent='Play Again';$('overlay').style.display='flex'}
+function spawn(initial=false){const rotten=Math.random()<.28;apples.push({x:35+Math.random()*(W-70),y:initial?Math.random()*160-180:-24,r:rotten?17:18,rotten,fall:speed*(.85+Math.random()*.3),phase:Math.random()*6})}
+function rounded(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill()}
+function drawBackground(){
+ ctx.fillStyle='#8bd7ff';ctx.fillRect(0,0,W,H);
+ // sun and clouds
+ ctx.fillStyle='#ffdf58';ctx.beginPath();ctx.arc(620,65,32,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#fff';for(const c of [[105,75,1],[340,112,.8],[500,150,.65]]){let [x,y,s]=c;ctx.beginPath();ctx.arc(x,y,22*s,0,Math.PI*2);ctx.arc(x+25*s,y-12*s,28*s,0,Math.PI*2);ctx.arc(x+52*s,y,20*s,0,Math.PI*2);ctx.fill()}
+ ctx.fillStyle='#68c96d';ctx.fillRect(0,GROUND+12,W,H-GROUND);
+ ctx.fillStyle='#399d51';ctx.fillRect(0,GROUND+12,W,7);
+ for(let x=8;x<W;x+=24){ctx.strokeStyle='#399d51';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,GROUND+20);ctx.lineTo(x-4,GROUND+12);ctx.stroke()}
 }
-function resetGame() {
-  score = 0; lives = CONFIG.startLives; level = 1; speed = CONFIG.startSpeed;
-  items = []; particles = []; popups = []; slowUntil = 0; shake = 0; last = 0; lastSpawn = 0;
-  basket.x = W / 2 - basket.w / 2;
-  clouds = [{ x: 90, y: 70, s: 1 }, { x: 430, y: 120, s: .7 }, { x: 620, y: 55, s: .6 }];
-  updateHud();
-}
-function startGame() {
-  resetGame(); state = 'playing';
-  startBtn.textContent = '↻ Restart'; msgEl.textContent = 'Catch the fruit and avoid 🤢!';
-  beep(520, .15);
-}
-function endGame(won) {
-  state = won ? 'won' : 'lost';
-  startBtn.textContent = '↻ Play Again';
-  msgEl.textContent = won ? '🏆 YOU WIN! Click Play Again.' : '💥 GAME OVER. Click Play Again.';
-  if (won) { beep(660, .15); setTimeout(() => beep(880, .25), 150); } else beep(160, .5, 'sawtooth');
-}
-function togglePause() {
-  if (state === 'playing') state = 'paused'; else if (state === 'paused') { state = 'playing'; last = 0; }
-  pauseBtn.textContent = state === 'paused' ? '▶ Resume' : 'Ⅱ Pause';
-}
-function updateHud() {
-  scoreEl.textContent = score;
-  levelEl.textContent = level;
-  speedEl.textContent = speed;
-  livesEl.textContent = '❤️'.repeat(Math.max(lives, 0)) || '🖤';
-}
-function spawn() {
-  const c = CONFIG.chance, r = Math.random();
-  let it = { x: 35 + Math.random() * (W - 70), y: -30, rot: 0, spin: (Math.random() - .5) * .08, r: 20 };
-  if (r < c.rotten) { it.type = 'rotten'; it.e = '🍏'; }
-  else if (r < c.rotten + c.golden) { it.type = 'golden'; it.e = GOLDEN.e; it.p = GOLDEN.p; }
-  else if (r < c.rotten + c.golden + c.heart) { if (lives >= CONFIG.maxLives) return; it.type = 'heart'; it.e = HEART.e; }
-  else if (r < c.rotten + c.golden + c.heart + c.ice) { it.type = 'ice'; it.e = ICE.e; }
-  else { const f = FRUITS[Math.floor(Math.random() * FRUITS.length)]; it.type = 'fruit'; it.e = f.e; it.p = f.p; }
-  items.push(it);
-}
-function burst(x, y, color) {
-  for (let i = 0; i < 14; i++) particles.push({ x, y, vx: (Math.random() - .5) * 6, vy: (Math.random() - .9) * 6, life: 28, color });
-}
-function popup(x, y, text, color) { popups.push({ x, y, text, color, life: 45 }); }
-function caught(it) {
-  burst(it.x, it.y, '#ffd25a');
-  if (it.type === 'rotten') {
-    lives--; shake = 12; burst(it.x, it.y, '#7a8f2a'); popup(it.x, it.y, '−1 ❤️', '#d63048'); beep(140, .3, 'sawtooth');
-    msgEl.textContent = 'Yuck! A rotten apple!';
-  } else if (it.type === 'heart') {
-    lives = Math.min(lives + 1, CONFIG.maxLives); popup(it.x, it.y, '+1 ❤️', '#e0265c'); beep(780); msgEl.textContent = 'Extra life!';
-  } else if (it.type === 'ice') {
-    slowUntil = performance.now() + CONFIG.slowSeconds * 1000; popup(it.x, it.y, 'SLOW!', '#2a8fd6'); beep(300, .25);
-    msgEl.textContent = '❄️ Time slowed down!';
-  } else {
-    const oldLevel = level;
-    score += it.p;
-    level = Math.floor(score / CONFIG.speedEveryPoints) + 1;
-    speed = CONFIG.startSpeed + level - 1;
-    popup(it.x, it.y, '+' + it.p, '#2a9d57');
-    beep(it.type === 'golden' ? 900 : 600 + it.p * 60);
-    msgEl.textContent = it.type === 'golden' ? '⭐ MEGA CATCH! +5' : 'Sweet catch!';
-    if (level > oldLevel) {
-      msgEl.textContent = '🎉 LEVEL ' + level + '! Fruits are faster!';
-      popup(it.x, it.y - 25, 'LEVEL ' + level + '!', '#7d4dff');
-      beep(820, .18);
-    }
-    if (score > best) { best = score; bestEl.textContent = best; try { localStorage.setItem('fruitCatcherBest', best); } catch (e) {} }
-  }
-  updateHud();
-  if (lives <= 0) endGame(false); else if (score >= CONFIG.winScore) endGame(true);
-}
-function update(now) {
-  if (!last) last = now;
-  const dt = Math.min((now - last) / 16.67, 3); last = now;
-  if (keys.left) basket.x -= CONFIG.basketSpeed * dt;
-  if (keys.right) basket.x += CONFIG.basketSpeed * dt;
-  basket.x = Math.max(0, Math.min(W - basket.w, basket.x));
-  const spawnDelay = Math.max(CONFIG.minSpawnMs, CONFIG.spawnEveryMs - (level - 1) * CONFIG.spawnReductionPerLevel);
-  if (now - lastSpawn > spawnDelay && items.length < CONFIG.maxOnScreen) { spawn(); lastSpawn = now; }
-  const slow = now < slowUntil ? 0.45 : 1;
-  for (let i = items.length - 1; i >= 0; i--) {
-    const it = items[i];
-    it.y += speed * 0.7 * slow * dt; it.rot += it.spin * dt;
-    const hit = it.y + it.r > basket.y && it.y - it.r < basket.y + basket.h &&
-                it.x > basket.x - it.r * .6 && it.x < basket.x + basket.w + it.r * .6;
-    if (hit) { items.splice(i, 1); caught(it); if (state !== 'playing') return; }
-    else if (it.y - it.r > H) items.splice(i, 1);
-  }
-}
-function drawBackground(t) {
-  const g = ctx.createLinearGradient(0, 0, 0, H);
-  g.addColorStop(0, '#6ec6ff'); g.addColorStop(.75, '#d9f3ff'); g.addColorStop(1, '#d9f6c7');
-  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-  ctx.fillStyle = '#ffd84d'; ctx.beginPath(); ctx.arc(640, 80, 40, 0, 7); ctx.fill();
-  ctx.fillStyle = 'rgba(255,216,77,.25)'; ctx.beginPath(); ctx.arc(640, 80, 58 + Math.sin(t / 500) * 4, 0, 7); ctx.fill();
-  clouds.forEach(c => {
-    c.x += .15 * c.s; if (c.x > W + 80) c.x = -90;
-    ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.beginPath();
-    ctx.arc(c.x, c.y, 19 * c.s, 0, 7); ctx.arc(c.x + 22 * c.s, c.y - 10 * c.s, 25 * c.s, 0, 7); ctx.arc(c.x + 48 * c.s, c.y, 18 * c.s, 0, 7); ctx.fill();
-  });
-  ctx.fillStyle = '#a3df87'; ctx.beginPath(); ctx.ellipse(60, H, 170, 70, 0, 0, 7); ctx.ellipse(640, H, 210, 80, 0, 0, 7); ctx.fill();
-  ctx.fillStyle = '#6fc46c'; ctx.fillRect(0, H - 22, W, 22);
-}
-function drawBasket() {
-  const { x, y, w, h } = basket;
-  ctx.fillStyle = 'rgba(0,0,0,.12)'; ctx.beginPath(); ctx.ellipse(x + w / 2, y + h + 8, w * .55, 7, 0, 0, 7); ctx.fill();
-  ctx.fillStyle = '#bb743b'; ctx.beginPath(); ctx.roundRect(x + 6, y, w - 12, h, [0, 0, 12, 12]); ctx.fill();
-  ctx.strokeStyle = '#7e4b2b'; ctx.lineWidth = 3;
-  for (let i = 1; i < 6; i++) { ctx.beginPath(); ctx.moveTo(x + 6 + i * (w - 12) / 6, y + 6); ctx.lineTo(x + 6 + i * (w - 12) / 6, y + h - 3); ctx.stroke(); }
-  ctx.fillStyle = '#8a5530'; ctx.beginPath(); ctx.roundRect(x, y - 4, w, 10, 5); ctx.fill();
-}
-function drawItem(it) {
-  ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(it.rot);
-  if (it.type === 'golden') { ctx.shadowColor = '#ffc83d'; ctx.shadowBlur = 18; }
-  ctx.font = '38px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(it.e, 0, 0);
-  if (it.type === 'rotten') { ctx.shadowBlur = 0; ctx.font = '18px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif'; ctx.fillText('🤢', 0, 4); }
-  ctx.restore();
-}
-function overlay(title, sub) {
-  ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.beginPath(); ctx.roundRect(100, 130, W - 200, 170, 26); ctx.fill();
-  ctx.textAlign = 'center'; ctx.fillStyle = '#172747'; ctx.font = '900 38px system-ui,sans-serif'; ctx.fillText(title, W / 2, 190);
-  ctx.fillStyle = '#65758e'; ctx.font = '18px system-ui,sans-serif'; ctx.fillText(sub, W / 2, 232);
-  ctx.font = '15px system-ui,sans-serif'; ctx.fillText('Press Start or Space', W / 2, 266);
-}
-function draw(t) {
-  ctx.save();
-  if (shake > 0) { ctx.translate((Math.random() - .5) * shake, (Math.random() - .5) * shake); shake--; }
-  drawBackground(t); items.forEach(drawItem); drawBasket();
-  particles.forEach(p => { ctx.globalAlpha = Math.max(0, p.life / 28); ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, 7); ctx.fill(); p.x += p.vx; p.y += p.vy; p.vy += .15; p.life--; });
-  ctx.globalAlpha = 1; particles = particles.filter(p => p.life > 0);
-  popups.forEach(p => { ctx.globalAlpha = Math.min(1, p.life / 25); ctx.fillStyle = p.color; ctx.font = '900 26px system-ui,sans-serif'; ctx.textAlign = 'center'; ctx.fillText(p.text, p.x, p.y - (45 - p.life)); p.life--; });
-  ctx.globalAlpha = 1; popups = popups.filter(p => p.life > 0);
-  if (t < slowUntil) { ctx.fillStyle = 'rgba(120,200,255,.18)'; ctx.fillRect(0, 0, W, H); }
-  ctx.restore();
-  if (state === 'ready') overlay('Ready to catch?', 'Fruit = points · 🤢 = lose a life');
-  if (state === 'paused') overlay('Paused', 'Press Resume or P');
-  if (state === 'won') overlay('🏆 YOU WIN!', 'You scored ' + score + ' points!');
-  if (state === 'lost') overlay('GAME OVER', 'Final score: ' + score + ' · Best: ' + best);
-}
-function loop(t) { if (state === 'playing') update(t); draw(t); requestAnimationFrame(loop); }
-startBtn.onclick = startGame;
-pauseBtn.onclick = togglePause;
-muteBtn.onclick = () => { muted = !muted; muteBtn.textContent = muted ? '🔇' : '🔊'; };
-document.addEventListener('keydown', e => {
-  const k = e.key.toLowerCase();
-  if (['arrowleft', 'arrowright', ' '].includes(k)) e.preventDefault();
-  if (k === 'arrowleft' || k === 'a') keys.left = true;
-  if (k === 'arrowright' || k === 'd') keys.right = true;
-  if (k === ' ' && (state === 'ready' || state === 'won' || state === 'lost')) startGame();
-  if (k === 'p') togglePause();
-});
-document.addEventListener('keyup', e => {
-  const k = e.key.toLowerCase();
-  if (k === 'arrowleft' || k === 'a') keys.left = false;
-  if (k === 'arrowright' || k === 'd') keys.right = false;
-});
-function hold(id, key) {
-  const el = $(id), on = e => { e.preventDefault(); keys[key] = true; }, off = () => keys[key] = false;
-  el.addEventListener('pointerdown', on);
-  ['pointerup', 'pointercancel', 'pointerleave'].forEach(v => el.addEventListener(v, off));
-}
-hold('left', 'left'); hold('right', 'right');
-function drag(e) {
-  const r = canvas.getBoundingClientRect();
-  basket.x = Math.max(0, Math.min(W - basket.w, (e.clientX - r.left) / r.width * W - basket.w / 2));
-}
-canvas.addEventListener('pointerdown', e => { canvas.setPointerCapture(e.pointerId); drag(e); });
-canvas.addEventListener('pointermove', e => { if (e.buttons || e.pointerType === 'touch') drag(e); });
-resetGame();
-requestAnimationFrame(loop);
+function drawApple(a){ctx.save();ctx.translate(a.x,a.y);ctx.rotate(Math.sin(a.phase)*.08);
+ if(a.rotten){ctx.fillStyle='#78943b';ctx.beginPath();ctx.arc(-5,1,12,0,Math.PI*2);ctx.arc(6,2,12,0,Math.PI*2);ctx.fill();ctx.fillStyle='#6a4930';ctx.fillRect(-2,-16,5,10);ctx.fillStyle='#426b36';ctx.beginPath();ctx.ellipse(7,-13,8,4,-.5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(-4,0,2.5,0,Math.PI*2);ctx.arc(5,0,2.5,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#403b2d';ctx.lineWidth=2;ctx.beginPath();ctx.arc(1,8,5,Math.PI,Math.PI*2);ctx.stroke()}
+ else{ctx.fillStyle='#ed4242';ctx.beginPath();ctx.arc(-7,0,12,0,Math.PI*2);ctx.arc(7,0,12,0,Math.PI*2);ctx.fill();ctx.fillStyle='#c92e35';ctx.beginPath();ctx.ellipse(0,8,9,7,0,0,Math.PI);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.ellipse(-7,-4,3,5,-.3,0,Math.PI*2);ctx.fill();ctx.fillStyle='#4a8d3a';ctx.fillRect(-1,-18,4,9);ctx.beginPath();ctx.ellipse(7,-15,8,4,-.5,0,Math.PI*2);ctx.fill()}
+ ctx.restore()}
+function drawBasket(){const x=basket.x-basket.w/2,y=basket.y-basket.h/2;ctx.fillStyle='#a9672e';ctx.beginPath();ctx.ellipse(basket.x,basket.y-14,26,24,0,Math.PI,Math.PI*2);ctx.strokeStyle='#8d4d22';ctx.lineWidth=5;ctx.stroke();ctx.fillStyle='#c88745';ctx.beginPath();ctx.moveTo(x+5,y);ctx.lineTo(x+basket.w-5,y);ctx.lineTo(x+basket.w-16,y+basket.h);ctx.lineTo(x+16,y+basket.h);ctx.closePath();ctx.fill();ctx.strokeStyle='#8d4d22';ctx.lineWidth=4;ctx.stroke();ctx.strokeStyle='#e8b16e';ctx.lineWidth=3;for(let i=1;i<5;i++){ctx.beginPath();ctx.moveTo(x+i*basket.w/6,y+3);ctx.lineTo(x+i*basket.w/6,y+basket.h-3);ctx.stroke()}ctx.fillStyle='#8d4d22';ctx.fillRect(x-3,y-4,basket.w+6,8)}
+function draw(){drawBackground();apples.forEach(drawApple);drawBasket()}
+function loop(time){if(!running)return;const dt=Math.min((time-lastTime)/16.67||1,2);lastTime=time;
+ if(keys.left)basket.x-=7*dt;if(keys.right)basket.x+=7*dt;basket.x=Math.max(basket.w/2,Math.min(W-basket.w/2,basket.x));
+ if(time-lastSpawn>850){spawn();lastSpawn=time}
+ for(let i=apples.length-1;i>=0;i--){const a=apples[i];a.y+=a.fall*dt;a.phase+=.04*dt;
+  const hit=Math.abs(a.x-basket.x)<basket.w/2+a.r*.55&&a.y+a.r>basket.y-basket.h/2&&a.y-a.r<basket.y+basket.h/2;
+  if(hit){if(a.rotten){lives=Math.max(0,lives-1)}else{score++;if(score%5===0)speed++;}apples.splice(i,1);hud();if(lives<=0){draw();finish(false);return}if(score>=20){draw();finish(true);return}}
+  else if(a.y>H+20){apples.splice(i,1);spawn()}
+ }
+ draw();requestAnimationFrame(loop)}
+function key(e,down){if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();keys[e.key==='ArrowLeft'?'left':'right']=down}}
+window.addEventListener('keydown',e=>key(e,true));window.addEventListener('keyup',e=>key(e,false));
+function hold(id,dir){const b=$(id);const on=e=>{e.preventDefault();keys[dir]=true},off=e=>{e.preventDefault();keys[dir]=false};b.addEventListener('pointerdown',on);['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,off))}
+hold('left','left');hold('right','right');$('start').addEventListener('click',reset);$('restart').addEventListener('click',reset);
+draw();
+})();
 </script>
 </body>
 </html>
